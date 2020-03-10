@@ -90,55 +90,10 @@ public class HomeController {
 //		return "http://" + localIP+ ":" + request.getServerPort() + filename;
 //	}
 
-	
-	
-	
-
-	@ResponseBody
-	@RequestMapping("/image")
-	public void summer_image(MultipartFile file, HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
-		String save_folder = request.getSession().getServletContext().getRealPath("/image/");
-		System.out.println("저장소 : "+save_folder);
-		response.setContentType("text/html;charset=utf-8");
-		PrintWriter out = response.getWriter();
-		String file_name = file.getOriginalFilename();
-		String server_file_name = fileDBName(file_name, save_folder);
-		System.out.println("server file : " + server_file_name);
-		file.transferTo(new File(save_folder + server_file_name));
-		out.println("resources/upload"+server_file_name);
-		out.close();
-		System.out.println("실제 경로 : "+save_folder+server_file_name);
+	@RequestMapping("/insertForm.do")
+	public String insertForm() {
+		return "insertForm";
 	}
 	
-    private String fileDBName(String fileName, String saveFolder) {
-		Calendar c = Calendar.getInstance();
-		int year = c.get(Calendar.YEAR);
-		int month = c.get(Calendar.MONTH);
-		int date = c.get(Calendar.DATE);
-
-		String homedir = saveFolder + year + "-" + month + "-" + date;
-		System.out.println(homedir);
-		File path1 = new File(homedir);
-		if (!(path1.exists())) {
-			path1.mkdir();
-		}
-		Random r = new Random();
-		int random = r.nextInt(100000000);
-
-		int index = fileName.lastIndexOf(".");
-
-		String fileExtension = fileName.substring(index + 1);
-		System.out.println("fileExtension = " + fileExtension);
-
-		String refileName = "bbs" + year + month + date + random + "." + fileExtension;
-		System.out.println("refileName = " + refileName);
-
-		String fileDBName = "/" + year + "-" + month + "-" + date + "/" + refileName;
-		System.out.println("fileDBName = " + fileDBName);
-
-		return fileDBName;
-	}
-
 	
 }
