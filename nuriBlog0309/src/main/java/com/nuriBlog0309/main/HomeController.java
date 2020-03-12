@@ -26,43 +26,81 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Handles requests for the application home page.
  */
 @Controller
 public class HomeController {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
-	
+
 	private static final String FILE2 = "file";
 	private static final String ARTICLE = "article";
 	private static final String STATIC_IMAGES_THUMBNAILS = "/static/images/thumbnails/";
 	private static final String UPLOADIMG = "/static/uploadimg/";
 	private static final String UPLOADFILES = "/static/uploadfiles/";
 	private static final Logger LOGGER = LoggerFactory.getLogger(HomeController.class);
-	
+
 	@Autowired
 	ServletContext servletContext;
-	
+	@Autowired
+	DBService dbService;
+
 	/**
 	 * Simply selects the home view to render by returning its name.
 	 */
 	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public String home(Locale locale, Model model) {
-		logger.info("Welcome home! The client locale is {}.", locale);
-		
-		Date date = new Date();
-		DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG, locale);
-		
-		String formattedDate = dateFormat.format(date);
-		
-		model.addAttribute("serverTime", formattedDate );
-		
-		return "home";
+	public ModelAndView home(Locale locale, Model model, HttpServletRequest request, VO vo) {
+		// 이미지 갯수
+		int number = 0;
+		// 현재 페이지 갯수
+		int currentPageNo = 0;
+		// 현재 총 레코드 갯수
+		int currentRecord = 0;
+
+		if (request.getParameter("number") != null) {
+			number = Integer.parseInt(request.getParameter("number"));
+		} else {
+			number = 3;
+		}
+
+		if (request.getParameter("currentPageNo") != null) {
+			currentPageNo = (Integer.parseInt(request.getParameter("currentPageNo")));
+			currentRecord = ((currentPageNo - 1) * (number * 4));
+			if (currentPageNo <= 0) {
+				currentPageNo = 0;
+				currentRecord = currentPageNo * (number * 4);
+			}
+		}
+
+		BoardPaging bp = new BoardPaging(dbService.getCount(), currentPageNo, number);
+		System.out.println("레코드값 : " + dbService.getCount());
+
+		// 페이지 안에 표시되는 레코드 갯수 셋팅
+		if (currentRecord == 0) {
+			vo.setMinLimit(currentRecord);
+		} else {
+			vo.setMinLimit(currentRecord+1);
+		}
+
+		vo.setMaxLimit(currentRecord + (number * 4));
+		System.out.println("현재 페이지 : " + currentPageNo);
+		System.out.println("최소값 : " + vo.getMinLimit());
+		System.out.println("최대값 : " + vo.getMaxLimit());
+
+		ModelAndView mav = new ModelAndView("home");
+		// 리스트
+		mav.addObject("boardList", dbService.listBoard(vo));
+		// 이미지 갯수 view로 전달
+		mav.addObject("number", number);
+		// 페이징 처리 view로 전달
+		mav.addObject("boardPage", bp);
+
+		return mav;
 	}
 
-	
 //	@ResponseBody
 //	@RequestMapping("/article")
 //	public String imageUpload(MultipartHttpServletRequest request) throws IOException
@@ -94,6 +132,5 @@ public class HomeController {
 	public String insertForm() {
 		return "insertForm";
 	}
-	
-	
+
 }

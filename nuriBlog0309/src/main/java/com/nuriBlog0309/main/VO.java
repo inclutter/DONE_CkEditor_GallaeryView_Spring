@@ -4,6 +4,8 @@ public class VO {
 	private int num;
 	private String subject;
 	private String image_name;
+	private int maxLimit;
+	private int minLimit;
 	
 	public int getNum() {
 		return num;
@@ -23,6 +25,20 @@ public class VO {
 	public void setImage_name(String image_name) {
 		this.image_name = image_name;
 	}
+	public int getMaxLimit() {
+		return maxLimit;
+	}
+	public void setMaxLimit(int maxLimit) {
+		this.maxLimit = maxLimit;
+	}
+	public int getMinLimit() {
+		return minLimit;
+	}
+	public void setMinLimit(int minLimit) {
+		this.minLimit = minLimit;
+	}
+	
+	
 	
 	
 }

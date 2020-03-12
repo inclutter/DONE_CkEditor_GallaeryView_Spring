@@ -5,6 +5,6 @@
   
   <configuration>
   	<typeAliases>
-  		<typeAlias type="com.nuriBlog0309.VO" alias="boardVO"/>
+  		<typeAlias type="com.nuriBlog0309.main.VO" alias="boardVO"/>
   	</typeAliases>
   </configuration>

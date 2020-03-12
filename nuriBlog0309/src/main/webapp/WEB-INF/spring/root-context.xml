@@ -19,7 +19,7 @@
 	</bean>
 
 
-<!-- 	<bean id="sqlSessionFactory"
+	<bean id="sqlSessionFactory"
 		class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource"></property>
 		<property name="configLocation"
@@ -31,6 +31,6 @@
 	<bean id="sqlSession"
 		class="org.mybatis.spring.SqlSessionTemplate">
 		<constructor-arg index="0" ref="sqlSessionFactory"></constructor-arg>
-	</bean> -->
+	</bean>
 
 </beans>

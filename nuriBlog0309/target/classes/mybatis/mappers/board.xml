@@ -2,8 +2,8 @@
 <!DOCTYPE mapper
       PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-   
-   <mapper namespace="mapper.board">
+
+<mapper namespace="mapper.board">
 	<resultMap type="boardVO" id="boardResult">
 		<result property="num" column="num" />
 		<result property="subject" column="subject" />
@@ -12,18 +12,23 @@
 
 	<select id="selectBoard" resultMap="boardResult">
 		<![CDATA[
-			SELECT *
-			FROM NURI_BOARD
-			ORDER BY NUM DESC
+		select num,subject,image_name from(
+		select row_number() over (order by num),a.NUM,a.IMAGE_NAME,a.SUBJECT from nuriblog a
+		order by num)
+		where num between #{minLimit} and #{maxLimit}
 		]]>
 	</select>
 
 	<insert id="insertBoard" parameterType="java.util.Map">
 		<![CDATA[
-		INSERT INTO NURI_BOARD(NUM, SUBJECT, CONTENT, WRITER, PASSWD, FILENAME)
-		VALUES((SELECT NVL(MAX(NUM),0)+1 FROM NURI_BOARD),#{subject},#{content},#{writer},#{passwd, jdbcType=VARCHAR}, #{fileName, jdbcType=VARCHAR})
+		INSERT INTO NURIBLOG(NUM, SUBJECT, IMAGE_NAME)
+		VALUES((SELECT NVL(MAX(NUM),0)+1 FROM NURIBLOG),#{subject},#{image_name})
 		]]>
 	</insert>
+
+	<select id="getCount" resultType="int">
+		SELECT COUNT(NUM) FROM NURIBLOG
+	</select>
 
 
 </mapper> 
